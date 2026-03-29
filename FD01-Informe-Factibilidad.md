@@ -10,221 +10,250 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *{Nombre de Proyecto}***
+**Proyecto Antispam**
 
-Curso: *{Nombre de Asignatura}*
+Curso: *Calidad y Pruebas de Software*
 
-Docente: *{Nombre de Docente}*
+Docente: *Patrick Cuadros Quiroga*
 
 Integrantes:
 
-***{Apellidos y nombres del estudiante (código universitario)}***
+- Jahuira Pilco, Dayan Elvis (2022075749)  
+- Mamani Cori, Cristhian Carlos (2023077282)
 
 **Tacna – Perú**
 
-***{Año}***
+**2026**
 
-**  
-**
 </center>
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-Sistema *{Nombre del Sistema}*
+---
 
-Informe de Factibilidad
+Sistema Antispam  
+**Informe de Factibilidad**  
+Versión 1.0  
 
-Versión *{1.0}*
+---
 
-|CONTROL DE VERSIONES||||||
-| :-: | :- | :- | :- | :- | :- |
-|Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+## CONTROL DE VERSIONES
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+| Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
+|--------|----------|-------------|-------------|-------|--------|
+| 1.0 | MPV | ELV | ARV | 26/04/2026 | Versión Original |
 
-# **INDICE GENERAL**
+---
 
-[1. Descripción del Proyecto](#_Toc52661346)
+# INDICE GENERAL
 
-[2. Riesgos](#_Toc52661347)
+1. Descripción del Proyecto  
+2. Riesgos  
+3. Análisis de la Situación actual  
+4. Estudio de Factibilidad  
+5. Análisis Financiero  
+6. Conclusiones  
 
-[3. Análisis de la Situación actual](#_Toc52661348)
+---
 
-[4. Estudio de Factibilidad](#_Toc52661349)
+# 1. Descripción del Proyecto
 
-[4.1 Factibilidad Técnica](#_Toc52661350)
+## 1.1 Nombre del proyecto
+Antispam
 
-[4.2 Factibilidad económica](#_Toc52661351)
+## 1.2 Duración del proyecto
+1 mes (4 semanas)
 
-[4.3 Factibilidad Operativa](#_Toc52661352)
+## 1.3 Descripción
+El proyecto consiste en el desarrollo de una aplicación móvil para Android capaz de detectar llamadas entrantes de números desconocidos y evaluar su nivel de riesgo en tiempo real.
 
-[4.4 Factibilidad Legal](#_Toc52661353)
+El sistema se basa en una base de datos colaborativa donde los usuarios pueden reportar números sospechosos, permitiendo identificar patrones de fraude y generar alertas preventivas.
 
-[4.5 Factibilidad Social](#_Toc52661354)
+La aplicación analiza las llamadas sin interferir con el funcionamiento del dispositivo, mostrando advertencias antes de contestar. Se busca reducir estafas telefónicas y mejorar la seguridad digital.
 
-[4.6 Factibilidad Ambiental](#_Toc52661355)
+## 1.4 Objetivos
 
-[5. Análisis Financiero](#_Toc52661356)
+### 1.4.1 Objetivo general
+Desarrollar un sistema móvil antispam que permita detectar y alertar llamadas fraudulentas mediante reportes comunitarios y análisis de riesgo.
 
-[6. Conclusiones](#_Toc52661357)
+### 1.4.2 Objetivos específicos
+- Detectar llamadas entrantes y capturar números desconocidos  
+- Desarrollar backend para gestión de reportes  
+- Implementar evaluación de riesgo  
+- Diseñar interfaz clara y sencilla  
+- Crear base de datos colaborativa  
+- Evaluar el sistema mediante pruebas  
 
+---
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+# 2. Riesgos
 
-**<u>Informe de Factibilidad</u>**
+- Limitaciones técnicas (versiones Android)  
+- Permisos del usuario  
+- Dependencia de internet  
+- Falsos positivos/negativos  
+- Baja participación de usuarios  
+- Riesgos de seguridad  
 
-1. <span id="_Toc52661346" class="anchor"></span>**Descripción del Proyecto**
+---
 
-    1.1. Nombre del proyecto
+# 3. Análisis de la Situación Actual
 
-    1.2. Duración del proyecto
+## 3.1 Planteamiento del problema
+Existe un aumento de llamadas fraudulentas desde números desconocidos. Las soluciones actuales no se adaptan al contexto local ni permiten participación activa.
 
-    1.3. Descripción
+Se requiere un sistema que detecte y alerte llamadas sospechosas en tiempo real.
 
-        En que consiste el proyecto/importancia del mismo, contexto en que se va desenvolver
+## 3.2 Consideraciones de hardware y software
 
-    1.4. Objetivos
+| Tipo | Recurso | Descripción |
+|------|--------|------------|
+| Hardware | PC/Laptop | Intel i5, 8GB RAM |
+| Software | Windows 10 | Sistema base |
 
-        1.4.1 Objetivo general
-        1.4.2 Objetivos Específicos
-            Para cada objetivo específico se indicara que se va a lograr
+---
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+# 4. Estudio de Factibilidad
 
-2. <span id="_Toc52661347" class="anchor"></span>**Riesgos**
+## 4.1 Factibilidad Técnica
 
-    Señale los riesgos que pudieran afectar el éxito del proyecto.}*
+| Cantidad | Recurso | Descripción |
+|---------|--------|------------|
+| 1 | Laptop | Ryzen 5, 16GB RAM |
+| 1 | Laptop | ASUS Ryzen, 16GB RAM |
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-3. <span id="_Toc52661348" class="anchor"></span>**Análisis de la Situación actual**
+## 4.2 Factibilidad Económica
 
-    3.1. Planteamiento del problema
+### 4.2.1 Costos Generales
 
-            Describa antecedentes y situación actual, explicando la problemática y/o necesidad que será resuelta con el proyecto propuesto.
+| Item | Cantidad | Costo Unitario | Total |
+|------|---------|---------------|------|
+| Software | 1 | 0 | 0 |
+| Computadora | 1 | 0 | 0 |
+| TOTAL |  |  | 0 |
 
-    3.2. Consideraciones de hardware y software
+---
 
-            Hardware y software posibles para la implementación, se analizara lo que existe y es alcanzable, se evaluara que tecnología se puede > utilizar en el proyecto.
+### 4.2.2 Costos Operativos
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+| Concepto | Costo mensual | Duración | Total |
+|----------|--------------|----------|------|
+| Internet | 50 | 1 | 50 |
+| Energía | 30 | 1 | 30 |
+| TOTAL |  |  | 80 |
 
-4. <span id="_Toc52661349" class="anchor"></span>**Estudio de
-    Factibilidad**
+---
 
-    Describir los resultados que esperan alcanzar del estudio de factibilidad, las actividades que se realizaron para preparar la evaluación de factibilidad y por quien fue aprobado.
+### 4.2.3 Costos del Ambiente
 
-    4.1. <span id="_Toc52661350" class="anchor"></span>Factibilidad Técnica
+| Concepto | Total |
+|----------|------|
+| Equipos | 0 |
+| Software | 0 |
+| TOTAL | 0 |
 
-        El estudio de viabilidad técnica se enfoca en obtener un entendimiento de los recursos tecnológicos disponibles actualmente y su aplicabilidad a las necesidades que se espera tenga el proyecto. En el caso de tecnología informática esto implica una evaluación del hardware y software y como este puede cubrir las necesidades del sistema propuesto.
+---
 
-        Realizar una evaluación de la tecnología actual existente y la posibilidad de utilizarla en el desarrollo e implantación del sistema.*
+### 4.2.4 Costos de Personal
 
-        Describir acerca del hardware (equipos, servidor), software (aplicaciones, navegadores, sistemas operativos, dominio, internet, infraestructura de red física, etc.
+| Rol | Costo mensual | Total |
+|-----|--------------|------|
+| Desarrollador móvil | 2500 | 2500 |
+| Backend | 2500 | 2500 |
+| TOTAL |  | 5000 |
 
-    4.2. <span id="_Toc52661351" class="anchor"></span>Factibilidad Económica
+---
 
-        El propósito del estudio de viabilidad económica, es determinar los beneficios económicos del proyecto o sistema propuesto para la organización, en contraposición con los costos.
-        Como se mencionó anteriormente en el estudio de factibilidad técnica wvaluar si la institución (departamento de TI) cuenta con las herramientas necesarias para la implantación del sistema y evaluar si la propuesta requiere o no de una inversión inicial en infraestructura informática.
-        Se plantearán los costos del proyecto.
-        Costeo del Proyecto: Consiste en estimar los costos de los recursos Humanos, materiales o consumibles y/o máquinas) directos para completar las actividades del proyecto}.*
+### 4.2.5 Costos Totales
 
-        Definir los siguientes costos:
+| Categoría | Total |
+|----------|------|
+| Generales | 0 |
+| Operativos | 80 |
+| Ambiente | 0 |
+| Personal | 5000 |
+| TOTAL | 5800 |
 
-        4.2.1. Costos Generales
+---
 
-                Los costos generales son todos los gastos realizados en accesorios y material de oficina y de uso diario, necesarios para los procesos, tales como, papeles, plumas, cartuchos de impresora, marcadores, computadora etc. Colocar tabla de costos.
+## 4.3 Factibilidad Operativa
 
-        4.2.2. Costos operativos durante el desarrollo 
-        
-                Evaluar costos necesarios para la operatividad de las actividades de la empresa durante el periodo en el que se realizara el proyecto. Los costos de operación pueden ser renta de oficina, agua, luz, teléfono, etc.
+- Fácil uso  
+- Alta aceptación  
+- Requiere internet  
+- Escalable  
 
-        4.2.3. Costos del ambiente
+---
 
-                Evaluar si se cuenta con los requerimientos técnicos para la implantación del software como el dominio, infraestructura de red, acceso a internet, etc.
+## 4.4 Factibilidad Legal
 
-        4.2.4. Costos de personal
+- Protección de datos  
+- Consentimiento del usuario  
+- Cumplimiento de normas  
 
-                Aquí se incluyen los gastos generados por el recurso humano que se necesita para el desarrollo del sistema únicamente.
+---
 
-                No se considerará personal para la operación y funcionamiento del sistema.
+## 4.5 Factibilidad Social
 
-                Incluir tabla que muestra los gastos correspondientes al personal.
+- Mejora seguridad  
+- Promueve participación  
+- Impacto alto  
 
-                Indicar organización y roles. Indicar horario de trabajo del personal.
+---
 
-        4.2.5.  Costos totales del desarrollo del sistema
+## 4.6 Factibilidad Ambiental
 
-                {Totalizar costos y realizar resumen de costo final del proyecto y la forma de pago.
+- Bajo impacto ambiental  
+- Uso digital  
 
-    4.3. <span id="_Toc52661352" class="anchor"></span>Factibilidad Operativa
+---
 
-        Describir los beneficios del producto y si se tiene la capacidad por parte del cliente para mantener el sistema funcionando y garantizar el buen funcionamiento y su impacto en los usuarios. Lista de interesados.
+# 5. Análisis Financiero
 
-    4.4. <span id="_Toc52661353" class="anchor"></span>Factibilidad Legal
+## 5.1 Justificación de la Inversión
 
-        Determinar si existe conflicto del proyecto con restricciones legales como leyes y regulaciones del país o locales relacionadas con seguridad, protección de datos, conducta de negocio, empleo y adquisiciones.
+### 5.1.1 Beneficios del Proyecto
+- Reducción de estafas  
+- Mayor seguridad  
+- Participación comunitaria  
+- Escalabilidad futura  
 
-    4.5. <span id="_Toc52661354" class="anchor"></span>Factibilidad Social 
+---
 
-        Evaluar influencias y asuntos de índole social y cultural como el clima político, códigos de conducta y ética*
+### 5.1.2 Criterios de Inversión
 
-    4.6. <span id="_Toc52661355" class="anchor"></span>Factibilidad Ambiental
+#### Relación Beneficio/Costo (B/C)
+Fórmula:
+B/C = Beneficios / Costos
 
-        Evaluar influencias y asuntos de índole ambiental como el impacto y repercusión en el medio ambiente.
+Cálculo:
+B/C = 8000 / 5800 = 1.38
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-5. <span id="_Toc52661356" class="anchor"></span>**Análisis Financiero**
+#### Valor Actual Neto (VAN)
+Fórmula:
+VAN = Σ (Flujos / (1 + r)^t) - Inversión
 
-    El plan financiero se ocupa del análisis de ingresos y gastos asociados a cada proyecto, desde el punto de vista del instante temporal en que se producen. Su misión fundamental es detectar situaciones financieramente inadecuadas.
-    Se tiene que estimar financieramente el resultado del proyecto.
+Cálculo:
+VAN = 8000 / (1 + 0.1)^1 - 5800 = 7272.72 - 5800 = 1472.72
 
-    5.1. Justificación de la Inversión
+---
 
-        5.1.1. Beneficios del Proyecto
+#### Tasa Interna de Retorno (TIR)
+Fórmula:
+0 = Σ (Flujos / (1 + TIR)^t) - Inversión
 
-            El beneficio se calcula como el margen económico menos los costes de oportunidad, que son los márgenes que hubieran podido obtenerse de haber dedicado el capital y el esfuerzo a otras actividades.
-            El beneficio, obtenido lícitamente, no es sólo una recompensa a la inversión, al esfuerzo y al riesgo asumidos por el empresario, sino que también es un factor esencial para que las empresas sigan en el  mercado e incorporen nuevas inversiones al tejido industrial y social de las naciones.
-            Describir beneficios tangibles e intangibles*
-            Beneficios tangibles: son de fácil cuantificación, generalmente están relacionados con la reducción de recursos o talento humano.
-            Beneficios intangibles: no son fácilmente cuantificables y están relacionados con elementos o mejora en otros procesos de la organización.
->
-            Ejemplo de beneficios:
+Resultado aproximado:
+TIR ≈ 25%
 
-            - Mejoras en la eficiencia del área bajo estudio.
-            - Reducción de personal.
-            - Reducción de futuras inversiones y costos.
-            - Disponibilidad del recurso humano.
-            - Mejoras en planeación, control y uso de recursos.
-            - Suministro oportuno de insumos para las operaciones.
-            - Cumplimiento de requerimientos gubernamentales.
-            - Toma acertada de decisiones.
-            - Disponibilidad de información apropiada.
-            - Aumento en la confiabilidad de la información.
-            - Mejor servicio al cliente externo e interno
-            - Logro de ventajas competitivas.
-            - Valor agregado a un producto de la compañía.
-        
-        5.1.2. Criterios de Inversión
+---
 
-            5.1.2.1. Relación Beneficio/Costo (B/C)
+# 6. Conclusiones
 
-                En base a los costos y beneficios identificados se evalúa si es factible el desarrollo del proyecto. 
-                Si se presentan varias alternativas de solución se evaluará cada una de ellas para determinar la mejor solución desde el punto de vista del > retorno de la inversión
-                El B/C si es mayor a uno, se acepta el proyecto; si el B/C es igual a uno es indiferente aceptar o rechazar el proyecto y si el B/C es menor a uno se rechaza el proyecto
-
-            5.1.2.2. Valor Actual Neto (VAN)
-            
-                Valor actual de los beneficios netos que genera el proyecto. Si el VAN es mayor que cero, se acepta el proyecto; si el VAN es igual a cero es indiferente aceptar o rechazar el proyecto y si el VAN es menor que cero se rechaza el proyecto
-
-            5.1.2.3 Tasa Interna de Retorno (TIR)*
-                Es la tasa porcentual que indica la rentabilidad promedio anual que genera el capital invertido en el proyecto. Si la TIR es mayor que el costo de oportunidad se acepta el proyecto, si la TIR es igual al costo de oportunidad es indiferente aceptar o rechazar el proyecto, si la TIR es menor que el costo de oportunidad se rechaza el proyecto
-
-                Costo de oportunidad de capital (COK) es la tasa de interés que podría haber obtenido con el dinero invertido en el proyecto
-
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
-
-6. <span id="_Toc52661357" class="anchor"></span>**Conclusiones**
-
-Explicar los resultados del análisis de factibilidad que nos indican si el proyecto es viable y factible.
+- El proyecto es técnicamente viable  
+- Es económicamente factible  
+- Tiene impacto social positivo  
+- La participación comunitaria es clave  
+- Presenta indicadores financieros favorables  
+- Es escalable a futuro  
