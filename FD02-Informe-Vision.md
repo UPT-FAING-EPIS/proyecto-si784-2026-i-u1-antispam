@@ -1,7 +1,5 @@
 <center>
 
-[comment]: <img src="./media/media/image1.png" style="width:1.088in;height:1.46256in" alt="escudo.png" />
-
 ![./media/media/image1.png](./media/logo-upt.png)
 
 **UNIVERSIDAD PRIVADA DE TACNA**
@@ -10,221 +8,292 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *{Nombre de Proyecto}***
+**Proyecto Antispam**
 
-Curso: *{Nombre de Asignatura}*
+Curso: *Calidad y Pruebas de Software*
 
-Docente: *{Nombre de Docente}*
+Docente: *Patrick Cuadros Quiroga*
 
 Integrantes:
 
-***{Apellidos y nombres del estudiante (código universitario)}***
+- Jahuira Pilco, Dayan Elvis (2022075749)  
+- Mamani Cori, Cristhian Carlos (2023077282)
 
 **Tacna – Perú**
 
-***{Año}***
+**2026**
 
-**  
-**
 </center>
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-|CONTROL DE VERSIONES||||||
-| :-: | :- | :- | :- | :- | :- |
-|Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+---
 
+# Sistema Antispam  
+## Documento de Visión  
+**Versión 1.0**
 
+---
 
+## CONTROL DE VERSIONES
 
+| Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
+|--------|----------|-------------|-------------|-------|--------|
+| 1.0 | Jahuira Pilco | Mamani Cori | Jahuira Pilco | 26/04/2026 | Versión Original |
 
+---
 
+# ÍNDICE GENERAL
 
+1. Introducción  
+2. Posicionamiento  
+3. Descripción de interesados y usuarios  
+4. Vista General del Producto  
+5. Características del producto  
+6. Restricciones  
+7. Rangos de calidad  
+8. Precedencia y Prioridad  
+9. Otros requerimientos  
+10. Conclusiones  
+11. Recomendaciones  
 
+---
 
+# 1. Introducción
 
+## 1.1 Propósito
 
+Definir la visión del sistema Antispam, estableciendo su alcance, objetivos, funcionalidades y actores involucrados, sirviendo como guía para su desarrollo.
 
-**Sistema *{Nombre del Sistema}***
+---
 
-**Documento de Visión**
+## 1.2 Alcance
 
-**Versión *{1.0}***
-**
+El sistema será una aplicación móvil Android capaz de detectar llamadas entrantes y evaluar su riesgo en tiempo real.
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+**Incluye:**
 
-|CONTROL DE VERSIONES||||||
-| :-: | :- | :- | :- | :- | :- |
-|Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+- Identificación de números desconocidos  
+- Evaluación de riesgo basada en reportes  
+- Alertas al usuario antes de contestar  
+- Base de datos colaborativa  
+- Backend para gestión de reportes  
 
+**No incluye:**
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+- Bloqueo automático de llamadas  
+- Integración con operadoras  
+- Análisis de mensajes SMS  
+- Uso sin conexión a internet  
 
+---
 
-**INDICE GENERAL**
-#
-[1.	Introducción](#_Toc52661346)
+## 1.3 Definiciones
 
-1.1	Propósito
+| Término | Definición |
+|--------|-----------|
+| Spam | Llamadas no deseadas o fraudulentas |
+| App | Aplicación móvil |
+| Backend | Servidor que gestiona datos |
+| API | Interfaz de comunicación |
+| Riesgo | Nivel de probabilidad de fraude |
 
-1.2	Alcance
+---
 
-1.3	Definiciones, Siglas y Abreviaturas
+## 1.4 Referencias
 
-1.4	Referencias
+- Informe de Factibilidad (FD01)  
+- Documentación Android  
+- Buenas prácticas de seguridad móvil  
 
-1.5	Visión General
+---
 
-[2.	Posicionamiento](#_Toc52661347)
+## 1.5 Visión General
 
-2.1	Oportunidad de negocio
+El sistema Antispam busca brindar una solución accesible para detectar llamadas sospechosas mediante una aplicación móvil, utilizando inteligencia colectiva.
 
-2.2	Definición del problema
+Se enfoca en mejorar la seguridad del usuario y reducir fraudes telefónicos mediante alertas claras y oportunas.
 
-[3.	Descripción de los interesados y usuarios](#_Toc52661348)
+---
 
-3.1	Resumen de los interesados
+# 2. Posicionamiento
 
-3.2	Resumen de los usuarios
+## 2.1 Oportunidad de negocio
 
-3.3	Entorno de usuario
+El incremento de llamadas fraudulentas genera la necesidad de herramientas de protección accesibles y adaptadas al contexto local.
 
-3.4	Perfiles de los interesados
+---
 
-3.5	Perfiles de los Usuarios
+## 2.2 Problema
 
-3.6	Necesidades de los interesados y usuarios
+Los usuarios reciben llamadas desconocidas sin información previa, lo que facilita estafas y fraudes.
 
-[4.	Vista General del Producto](#_Toc52661349)
+---
 
-4.1	Perspectiva del producto
+# 3. Interesados y Usuarios
 
-4.2	Resumen de capacidades
+## 3.1 Interesados
 
-4.3	Suposiciones y dependencias
+| Interesado | Rol | Expectativa |
+|-----------|-----|------------|
+| Docente | Evaluador | Cumplimiento académico |
+| Estudiantes dev | Desarrollo | Aprendizaje |
+| Usuarios | Uso | Seguridad |
+| Comunidad | Participación | Reportes |
 
-4.4	Costos y precios
+---
 
-4.5	Licenciamiento e instalación
+## 3.2 Usuarios
 
-[5.	Características del producto](#_Toc52661350)
+| Usuario | Descripción | Uso |
+|--------|-------------|-----|
+| Básico | Usuario común | Diario |
+| Intermedio | Usuario activo | Frecuente |
+| Técnico | Evaluador | Pruebas |
 
-[6.	Restricciones](#_Toc52661351)
+---
 
-[7.	Rangos de calidad](#_Toc52661352)
+## 3.3 Entorno
 
-[8.	Precedencia y Prioridad](#_Toc52661353)
+Uso en smartphones Android con conexión a internet.
 
-[9.	Otros requerimientos del producto](#_Toc52661354)
+---
 
-b) Estandares legales
+## 3.4 Perfiles
 
-c) Estandares de comunicación	](#_toc394513800)37
+| Perfil | Función |
+|-------|--------|
+| Usuario | Recibe alertas |
+| Desarrollador | Mantiene sistema |
 
-d) Estandaraes de cumplimiento de la plataforma	](#_toc394513800)42
+---
 
-e) Estandaraes de calidad y seguridad	](#_toc394513800)42
+## 3.5 Necesidades
 
-[CONCLUSIONES](#_Toc52661355)
+| Necesidad | Prioridad |
+|----------|----------|
+| Seguridad | Alta |
+| Información clara | Alta |
+| Facilidad de uso | Alta |
+| Bajo consumo | Media |
 
-[RECOMENDACIONES](#_Toc52661356)
+---
 
-[BIBLIOGRAFIA](#_Toc52661357)
+# 4. Vista General del Producto
 
-[WEBGRAFIA](#_Toc52661358)
+## 4.1 Perspectiva
 
+Aplicación móvil conectada a un backend que procesa reportes y calcula riesgo.
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-**<u>Informe de Visión</u>**
+## 4.2 Capacidades
 
-1. <span id="_Toc52661346" class="anchor"></span>**Introducción**
+- Detección de llamadas  
+- Evaluación de riesgo  
+- Alertas en pantalla  
+- Reporte de números  
 
-    1.1	Propósito
+---
 
-    1.2	Alcance
+## 4.3 Suposiciones
 
-    1.3	Definiciones, Siglas y Abreviaturas
+- Usuario concede permisos  
+- Existe conexión a internet  
 
-    1.4	Referencias
+---
 
-    1.5	Visión General
+## 4.4 Costos
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+Costo estimado total: **S/. 5800**
 
-2. <span id="_Toc52661347" class="anchor"></span>**Posicionamiento**
+---
 
-    2.1	Oportunidad de negocio
+## 4.5 Licenciamiento
 
-    2.2	Definición del problema
+Software académico sin fines comerciales.
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-3. <span id="_Toc52661348" class="anchor"></span>**Vista General del Producto**
+# 5. Características
 
-    3.1	Resumen de los interesados
+**MUST**
 
-    3.2	Resumen de los usuarios
+- Detectar llamadas  
+- Mostrar alerta  
+- Evaluar riesgo  
 
-    3.3	Entorno de usuario
+**SHOULD**
 
-    3.4	Perfiles de los interesados
+- Historial de reportes  
+- Interfaz amigable  
 
-    3.5	Perfiles de los Usuarios
+**COULD**
 
-    3.6	Necesidades de los interesados y usuarios
+- Estadísticas  
+- Notificaciones inteligentes  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-4. <span id="_Toc52661349" class="anchor"></span>**Estudio de
-    Factibilidad**
+# 6. Restricciones
 
-    4.1	Perspectiva del producto
+- Dependencia de Android  
+- Permisos del sistema  
+- Requiere internet  
+- Tiempo de desarrollo limitado  
 
-    4.2	Resumen de capacidades
+---
 
-    4.3	Suposiciones y dependencias
+# 7. Rangos de Calidad
 
-    4.4	Costos y precios
+- Respuesta < 1 segundo  
+- Interfaz clara  
+- Baja tasa de error  
+- Alta disponibilidad  
 
-    4.5	Licenciamiento e instalación
+---
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+# 8. Prioridad
 
-5. <span id="_Toc52661350" class="anchor"></span>**Características del producto**
+1. Detección de llamadas  
+2. Evaluación de riesgo  
+3. Alertas  
+4. Backend  
+5. Interfaz  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-6. <span id="_Toc52661351" class="anchor"></span>**Restricciones**
+# 9. Otros Requerimientos
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+## Legales
 
-7. <span id="_Toc52661352" class="anchor"></span>**Rangos de Calidad**
+- Consentimiento del usuario  
+- Protección de datos  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+## Comunicación
 
-8. <span id="_Toc52661353" class="anchor"></span>**Precedencia y Prioridad**
+- Alertas claras  
+- Mensajes simples  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+## Plataforma
 
-9. <span id="_Toc52661354" class="anchor"></span>**Otros requerimientos del producto**
+- Android  
+- API backend  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+## Seguridad
 
-<span id="_Toc52661355" class="anchor"></span>**CONCLUSIONES**
+- No almacenar datos sensibles  
+- Uso seguro de permisos  
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+---
 
-<span id="_Toc52661356" class="anchor"></span>**RECOMENDACIONES**
+# 10. Conclusiones
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+El sistema Antispam es viable y responde a una necesidad real de seguridad digital, ofreciendo una solución basada en colaboración y análisis de riesgo.
 
-<span id="_Toc52661357" class="anchor"></span>**BIBLIOGRAFIA**
+---
 
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+# 11. Recomendaciones
 
-<span id="_Toc52661358" class="anchor"></span>**WEBGRAFIA**
-
-<div style="page-break-after: always; visibility: hidden">\pagebreak</div>
+- Mejorar precisión del algoritmo  
+- Incentivar participación de usuarios  
+- Realizar pruebas en distintos dispositivos  
+- Escalar el sistema en el futuro  
