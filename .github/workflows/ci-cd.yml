@@ -59,16 +59,11 @@ jobs:
           key: composer-${{ hashFiles('src/composer.lock') }}
           restore-keys: composer-
 
-      - name: "📦 Instalar dependencias"
+      - name: "⚙️ Instalar dependencias Composer"
         working-directory: ./src
         run: |
-          if [ -f "composer.json" ]; then
-            composer install --no-interaction --no-progress
-          else
-            echo "Error: composer.json no encontrado en ./src"
-            ls -R  # Esto te ayudará a ver dónde está el archivo realmente en los logs
-            exit 1
-          fi
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
+          php artisan package:discover --ansi
 
       - name: "🔧 Preparar entorno de pruebas"
         working-directory: ./src
