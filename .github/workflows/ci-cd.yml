@@ -63,7 +63,7 @@ jobs:
         working-directory: ./src
         run: |
           composer install --no-interaction --no-progress --prefer-dist --no-scripts
-          php artisan package:discover --ansi
+          echo "Dependencias instaladas sin scripts para evitar errores de ruta."
 
       - name: "🔧 Preparar entorno de pruebas"
         working-directory: ./src
