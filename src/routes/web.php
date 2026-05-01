@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+
 // Redirigir raíz al formulario de comentarios.
 
 Route::get('/', fn() => redirect()->route('comments.form'));
