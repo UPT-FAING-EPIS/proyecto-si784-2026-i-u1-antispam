@@ -9,7 +9,7 @@ FROM composer:2.7 AS composer-builder
 WORKDIR /app
 
 # Copiar archivos de dependencias primero (cache layer)
-COPY src/composer.json src/composer.lock ./
+COPY src/composer.json ./
 
 RUN composer install \
     --no-dev \
@@ -34,8 +34,10 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libpq-dev \
+    libicu-dev \
     zip \
     unzip \
+    && docker-php-ext-configure intl \
     && docker-php-ext-install \
         pdo_mysql \
         mbstring \
@@ -44,6 +46,7 @@ RUN apt-get update && apt-get install -y \
         bcmath \
         gd \
         zip \
+        intl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -80,7 +83,8 @@ COPY --from=composer-builder /app/vendor ./vendor
 COPY src/ .
 
 # Permisos de Laravel
-RUN chown -R www-data:www-data /var/www/html \
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 

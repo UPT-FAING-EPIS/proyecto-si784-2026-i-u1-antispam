@@ -12,7 +12,7 @@ echo "==================================================="
 
 # Esperar que MySQL esté disponible
 echo ">> Esperando conexión a base de datos..."
-until php artisan migrate:status &>/dev/null; do
+until php artisan db:show &>/dev/null; do
   echo "   Base de datos no disponible, reintentando en 3s..."
   sleep 3
 done

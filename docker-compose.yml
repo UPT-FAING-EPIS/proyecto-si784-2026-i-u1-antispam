@@ -19,7 +19,6 @@ services:
     environment:
       APP_NAME: "Aegis Filter"
       APP_ENV: local
-      APP_KEY: ${APP_KEY}
       APP_DEBUG: "true"
       APP_URL: http://localhost
 
