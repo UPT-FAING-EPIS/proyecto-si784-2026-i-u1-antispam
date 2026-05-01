@@ -19,7 +19,8 @@ Route::get('/comentarios', [CommentController::class, 'showForm'])
 Route::post('/comentarios', [CommentController::class, 'store'])
     ->name('comments.store');
 
-// ─── Rutas del Dashboard de Administración ────────────
+// ─── Rutas del Dashboard de Administración ───────────
+
 Route::get('/dashboard', [CommentController::class, 'dashboard'])
     ->name('dashboard');
 
@@ -28,3 +29,5 @@ Route::patch('/dashboard/{id}/approve', [CommentController::class, 'approve'])
 
 Route::delete('/dashboard/{id}', [CommentController::class, 'destroy'])
     ->name('comments.destroy');
+
+
