@@ -5,7 +5,6 @@
 
 # ─── Etapa 1: Dependencias de Composer ────────────────
 FROM composer:2.7 AS composer-builder
-
 WORKDIR /app
 
 # Copiar archivos de dependencias primero (cache layer).
