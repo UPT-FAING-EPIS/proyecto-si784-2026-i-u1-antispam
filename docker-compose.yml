@@ -1,6 +1,8 @@
 ########################################################
+#
 # Aegis Filter – Docker Compose
 # Servicios: app (Laravel) + db (MySQL 8) + phpmyadmin
+#
 ########################################################
 
 version: "3.9"
