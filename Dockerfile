@@ -8,7 +8,7 @@ FROM composer:2.7 AS composer-builder
 
 WORKDIR /app
 
-# Copiar archivos de dependencias primero (cache layer)
+# Copiar archivos de dependencias primero (cache layer).
 COPY src/composer.json ./
 
 RUN composer install \
@@ -100,4 +100,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 80
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 CMD ["apache2-foreground"]
