@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Unit;
-
 use App\Services\SpamFilterService;
 use PHPUnit\Framework\TestCase;
 
