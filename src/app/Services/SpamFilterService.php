@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
  * Curso: SI784 – Calidad y Pruebas de Software
  * Proyecto: Aegis Filter | Tech Hub Forum
  */
+
 class SpamFilterService
 {
     /**
