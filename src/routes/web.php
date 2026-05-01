@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Redirigir raíz al formulario de comentarios
+// Redirigir raíz al formulario de comentarios.
+
 Route::get('/', fn() => redirect()->route('comments.form'));
 
-// ─── Rutas del Formulario Público ─────────────────────
+// ─── Rutas del Formulario Público ────────────────────
+
 Route::get('/comentarios', [CommentController::class, 'showForm'])
     ->name('comments.form');
 
