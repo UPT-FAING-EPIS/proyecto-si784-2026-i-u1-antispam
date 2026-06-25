@@ -12,6 +12,7 @@
     "require-dev": {
         "beyondcode/laravel-er-diagram-generator": "^6.0",
         "fakerphp/faker": "^1.23",
+        "infection/infection": "^0.29",
         "laravel/pint": "^1.13",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
@@ -51,6 +52,9 @@
         "test-coverage": [
             "./vendor/bin/phpunit --coverage-html=coverage-report"
         ],
+        "test-mutation": [
+            "./vendor/bin/infection --threads=4 --min-msi=0 --min-covered-msi=0"
+        ],
         "generate-er-diagram": [
             "@php artisan generate:erd"
         ]
@@ -66,7 +70,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "infection/extension-installer": true
         }
     },
     "minimum-stability": "stable",
