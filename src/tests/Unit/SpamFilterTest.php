@@ -55,8 +55,6 @@ class SpamFilterTest extends TestCase
     // ══════════════════════════════════════════════════════════
 
     /**
-     * @test
-     * @group aprobados
      *
      * Gherkin:
      *   DADO que un usuario del foro Tech Hub escribe un mensaje normal
@@ -78,8 +76,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group aprobados
      *
      * Gherkin:
      *   DADO que un mensaje contiene exactamente 2 URLs (el límite permitido)
@@ -100,8 +96,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group aprobados
      *
      * Gherkin:
      *   DADO que el mensaje está completamente vacío
@@ -125,8 +119,6 @@ class SpamFilterTest extends TestCase
     // ══════════════════════════════════════════════════════════
 
     /**
-     * @test
-     * @group palabras_negras
      *
      * Gherkin:
      *   DADO que un mensaje contiene la palabra "gratis" de la lista negra
@@ -148,8 +140,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group palabras_negras
      *
      * Gherkin:
      *   DADO que un mensaje contiene la frase "compra ahora" en mayúsculas
@@ -170,8 +160,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group palabras_negras
      *
      * Gherkin:
      *   DADO que se agrega dinámicamente la palabra "maliciosa" a la lista negra
@@ -193,8 +181,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group palabras_negras
      *
      * Gherkin:
      *   DADO que el servicio tiene una lista negra configurada
@@ -213,8 +199,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group palabras_negras
      *
      * Gherkin:
      *   DADO que un mensaje contiene la palabra "viagra" (spam farmacéutico)
@@ -239,8 +223,6 @@ class SpamFilterTest extends TestCase
     // ══════════════════════════════════════════════════════════
 
     /**
-     * @test
-     * @group exceso_urls
      *
      * Gherkin:
      *   DADO que un mensaje contiene 3 URLs (superando el límite de 2)
@@ -262,8 +244,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group exceso_urls
      *
      * Gherkin:
      *   DADO que un mensaje contiene 5 URLs de tipo http y https
@@ -284,8 +264,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group exceso_urls
      *
      * Gherkin:
      *   DADO que se cambia el límite máximo de URLs a 5
@@ -306,8 +284,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group exceso_urls
      *
      * Gherkin:
      *   DADO que un mensaje no contiene ninguna URL
@@ -332,8 +308,6 @@ class SpamFilterTest extends TestCase
     // ══════════════════════════════════════════════════════════
 
     /**
-     * @test
-     * @group estructura
      *
      * Gherkin:
      *   DADO que se llama al método analyze()
@@ -358,8 +332,6 @@ class SpamFilterTest extends TestCase
     }
 
     /**
-     * @test
-     * @group estructura
      *
      * Gherkin:
      *   DADO que un mensaje es spam por palabras negras

@@ -18,7 +18,6 @@ class SettingsAdminTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO que max_allowed_urls vale 2 (seed de la migración)
@@ -48,7 +47,6 @@ class SettingsAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un visitante sin sesión

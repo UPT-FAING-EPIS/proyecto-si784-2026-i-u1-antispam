@@ -16,7 +16,6 @@ class RateLimitTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO el limitador "public-api" (30 req/min por IP)
@@ -42,7 +41,6 @@ class RateLimitTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO la ruta /api/check-spam

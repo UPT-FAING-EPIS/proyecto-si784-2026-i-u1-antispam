@@ -27,6 +27,12 @@ src/.phpunit.result.cache
 src/coverage-report/
 src/coverage.xml
 src/test-report.xml
+src/infection.log
+src/infection-summary.log
+src/infection.html
+semgrep.json
+semgrep.sarif
+snyk.json
 
 # Terraform
 infrastructure/terraform/.terraform/
