@@ -185,11 +185,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: src
+          # En "push" (solo a main) forzamos branch.name=main porque el plan
+          # gratuito de SonarCloud para repos privados solo admite analizar
+          # esa rama. En "pull_request" NO se debe fijar branch.name: la action
+          # ya detecta el contexto de PR (GITHUB_HEAD_REF/BASE_REF) y arma sus
+          # propios parámetros de decoración; combinarlo con branch.name hace
+          # que el Compute Engine de SonarCloud rechace el análisis.
           args: >
             -Dsonar.organization=cristhian465-sonar-cloud
             -Dsonar.projectKey=proyecto-si784-2026-i-u1-antispam
             -Dsonar.projectName=proyecto-si784-2026-i-u1-antispam
-            -Dsonar.branch.name=main
+            ${{ github.event_name == 'push' && '-Dsonar.branch.name=main' || '' }}
 
   # ════════════════════════════════════════════════════
   # 4) Semgrep (SAST) — anotaciones vía SARIF
