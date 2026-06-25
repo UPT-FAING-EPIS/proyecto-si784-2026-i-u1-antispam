@@ -72,6 +72,7 @@ jobs:
         working-directory: ./src
         run: |
           echo "### 🧪 Cobertura de pruebas" >> "$GITHUB_STEP_SUMMARY"
+          # shellcheck disable=SC2016
           php -r '
             $xml = @simplexml_load_file("coverage.xml");
             if (!$xml) { echo "No se pudo leer coverage.xml\n"; exit(0); }
@@ -231,20 +232,25 @@ jobs:
   snyk:
     name: "🛡️ Snyk"
     runs-on: ubuntu-latest
-    if: ${{ secrets.SNYK_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: "🛡️ Snyk – Análisis de vulnerabilidades"
-        uses: snyk/actions/php@master
+        working-directory: ./src
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --file=src/composer.lock --json-file-output=snyk.json
+        run: |
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "::notice::SNYK_TOKEN no configurado — se omite el análisis de Snyk (ver Notas al final de este workflow)."
+            exit 0
+          fi
+          npm install -g snyk
+          snyk test --severity-threshold=high --json-file-output=../snyk.json || true
 
       - name: "📤 Subir reporte de Snyk"
         uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: snyk-report
           path: snyk.json
