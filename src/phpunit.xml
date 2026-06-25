@@ -21,8 +21,8 @@
         </testsuite>
     </testsuites>
 
-    <!-- Cobertura de código -->
-    <coverage>
+    <!-- Filtro de cobertura (PHPUnit 11: vive en <source>, no en <coverage>) -->
+    <source>
         <include>
             <directory>app</directory>
         </include>
@@ -30,6 +30,10 @@
             <directory>app/Console</directory>
             <directory>app/Exceptions</directory>
         </exclude>
+    </source>
+
+    <!-- Formatos de reporte de cobertura -->
+    <coverage>
         <report>
             <clover outputFile="coverage.xml"/>
             <html outputDirectory="coverage-report" lowUpperBound="50" highLowerBound="90"/>
