@@ -264,3 +264,15 @@ TIR ≈ 72.5%
 - **Tiene impacto social positivo:** Protege a los usuarios de fraudes y mejora la seguridad digital.
 - **Presenta indicadores financieros favorables:** Un VAN positivo y un TIR del 72.5% aseguran su rentabilidad.
 - **Es escalable a futuro:** La infraestructura puede crecer dinámicamente según la demanda gracias a la nube de Azure.
+
+# 7. BIBLIOGRAFÍA
+* Microsoft Azure. (2026). Documentación oficial de precios y máquinas virtuales de Azure.
+* HashiCorp. (2026). Terraform Registry: Azure Provider Documentation.
+* Laravel. (2026). Laravel 11.x Documentation.
+* Docker Inc. (2026). Docker Compose reference.
+* Sociedad Peruana de Banca, Seguros y AFP (ASBANC). (2026). Tasa de interés de referencia para evaluación de proyectos.
+
+# 8. WEBGRAFÍA
+* Calculadora de VAN y TIR — Investopedia: https://www.investopedia.com/terms/n/npv.asp
+* Documentación de costos de Azure: https://azure.microsoft.com/es-es/pricing/
+* Guías de GitHub Actions: https://docs.github.com/es/actions

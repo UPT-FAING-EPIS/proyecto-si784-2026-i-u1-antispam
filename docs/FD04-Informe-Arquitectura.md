@@ -57,6 +57,8 @@ Versión 1.0
     3.4. Vista de procesos
     3.5. Vista de Despliegue (vista física)
 4. ATRIBUTOS DE CALIDAD DEL SOFTWARE
+5. BIBLIOGRAFÍA
+6. WEBGRAFÍA
 
 ---
 
@@ -672,3 +674,20 @@ El motor de validación SpamFilterService es altamente eficiente, capaz de evalu
 
 **Escenario de mantenibilidad**
 La arquitectura separada en capas (Controlador -> Servicio -> Modelo) facilita la extensibilidad. Nuevas reglas anti-spam pueden añadirse al servicio sin necesidad de reescribir la lógica de la API ni la estructura de la base de datos.
+
+---
+
+## 5. BIBLIOGRAFÍA
+* Laravel. (2026). Laravel 11.x Documentation: Architecture Concepts, Middleware, Service Container.
+* Mermaid.js. (2026). Mermaid Diagram Syntax Documentation.
+* Kruchten, P. (1995). *Architectural Blueprints — The "4+1" View Model of Software Architecture*. IEEE Software.
+* Discord. (2026). Discord Developer Portal: Gateway and Privileged Intents Documentation.
+* Amazon. (2026). Alexa Skills Kit (ASK) SDK for Python Documentation.
+* WordPress. (2026). Plugin Handbook: `pre_comment_approved` Filter Reference.
+* Caddy. (2026). Caddyfile Documentation: Automatic HTTPS.
+
+## 6. WEBGRAFÍA
+* Documentación oficial de FastAPI: https://fastapi.tiangolo.com/
+* Documentación de discord.py: https://discordpy.readthedocs.io/
+* Documentación de Docker Compose: https://docs.docker.com/compose/
+* Guías de Microsoft Azure NSG: https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview
