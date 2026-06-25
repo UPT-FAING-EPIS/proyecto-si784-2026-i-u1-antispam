@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Services;
+use App\Models\BlacklistWord;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -11,8 +14,8 @@ use Illuminate\Support\Facades\Log;
  * TODA la lógica antispam reside aquí, NUNCA en los controladores.
  *
  * Reglas implementadas:
- *  1. Bloqueo por palabras negras (blacklist)
- *  2. Bloqueo por exceso de URLs (más de 2)
+ *  1. Bloqueo por palabras negras (blacklist, cargada desde BD/caché)
+ *  2. Bloqueo por exceso de URLs (umbral configurable en BD/caché)
  *
  * Curso: SI784 – Calidad y Pruebas de Software
  * Proyecto: Aegis Filter | Tech Hub Forum
@@ -21,42 +24,18 @@ use Illuminate\Support\Facades\Log;
 class SpamFilterService
 {
     /**
-     * Lista negra de palabras/frases prohibidas.
-     * En producción, esta lista podría cargarse desde BD o config.
+     * Overrides en memoria de la lista negra, usados por
+     * addBlacklistedWord() (pruebas/configuración puntual de una request).
      *
      * @var array<string>
      */
-    private array $blacklistedWords = [
-        // Spam genérico
-        'compra ahora',
-        'oferta increíble',
-        'gana dinero',
-        'trabaja desde casa',
-        'haz clic aquí',
-        'gratis',
-        'bitcoin gratis',
-        'criptomonedas fácil',
-        'préstamo rápido',
-        'inversión garantizada',
-        // Contenido inapropiado
-        'viagra',
-        'casino online',
-        'apuestas deportivas',
-        'contenido adulto',
-        // Phishing
-        'verifica tu cuenta',
-        'actualiza tus datos',
-        'cuenta suspendida',
-        'ganaste un premio',
-    ];
+    private array $extraBlacklistedWords = [];
 
     /**
-     * Número máximo de URLs permitidas en un mensaje.
-     * Más de este límite se considera spam.
-     *
-     * @var int
+     * Override en memoria del límite de URLs, usado por
+     * setMaxAllowedUrls(). Null = usar el valor de BD/caché.
      */
-    private int $maxAllowedUrls = 2;
+    private ?int $maxAllowedUrlsOverride = null;
 
     // ══════════════════════════════════════════════════
     // MÉTODO PRINCIPAL
@@ -70,13 +49,14 @@ class SpamFilterService
      *
      * @param  string $content   Contenido del mensaje a analizar
      * @param  string $author    Nombre del autor (para logging)
+     * @param  string $channel   Canal de origen (web/telegram/alexa/wordpress), solo informativo
      * @return array{
      *     isSpam: bool,
      *     reason: string|null,
      *     score: int
      * }
      */
-    public function analyze(string $content, string $author = 'anonymous'): array
+    public function analyze(string $content, string $author = 'anonymous', string $channel = 'web'): array
     {
         $normalizedContent = $this->normalizeContent($content);
 
@@ -84,8 +64,9 @@ class SpamFilterService
         $blacklistResult = $this->checkBlacklistedWords($normalizedContent);
         if ($blacklistResult['found']) {
             Log::warning('SpamFilter: Palabra negra detectada', [
-                'author' => $author,
-                'word'   => $blacklistResult['word'],
+                'author'  => $author,
+                'channel' => $channel,
+                'word'    => $blacklistResult['word'],
             ]);
 
             return [
@@ -101,15 +82,16 @@ class SpamFilterService
         if ($urlResult['exceeded']) {
             Log::warning('SpamFilter: Exceso de URLs detectado', [
                 'author'    => $author,
+                'channel'   => $channel,
                 'url_count' => $urlResult['count'],
-                'max'       => $this->maxAllowedUrls,
+                'max'       => $this->getMaxAllowedUrls(),
             ]);
 
             return [
                 'isSpam' => true,
                 'reason' => 'too_many_urls',
                 'score'  => 80,
-                'detail' => "Se encontraron {$urlResult['count']} URLs (máximo permitido: {$this->maxAllowedUrls})",
+                'detail' => "Se encontraron {$urlResult['count']} URLs (máximo permitido: {$this->getMaxAllowedUrls()})",
             ];
         }
 
@@ -137,7 +119,7 @@ class SpamFilterService
      */
     public function checkBlacklistedWords(string $content): array
     {
-        foreach ($this->blacklistedWords as $word) {
+        foreach ($this->getBlacklistedWords() as $word) {
             // Usar strpos para búsqueda eficiente de subcadena
             if (str_contains($content, strtolower($word))) {
                 return [
@@ -176,7 +158,7 @@ class SpamFilterService
         $count = preg_match_all($urlPattern, $content, $matches);
 
         return [
-            'exceeded' => $count > $this->maxAllowedUrls,
+            'exceeded' => $count > $this->getMaxAllowedUrls(),
             'count'    => $count,
         ];
     }
@@ -212,33 +194,47 @@ class SpamFilterService
     /**
      * Agregar una palabra a la lista negra en tiempo de ejecución.
      * Útil para pruebas unitarias y configuración dinámica.
+     * Es un override en memoria: no persiste en BD ni afecta a otras requests.
      *
      * @param  string $word Palabra a agregar
      * @return void
      */
     public function addBlacklistedWord(string $word): void
     {
-        $this->blacklistedWords[] = strtolower($word);
+        $this->extraBlacklistedWords[] = strtolower($word);
     }
 
     /**
-     * Obtener la lista negra actual.
+     * Obtener la lista negra actual (BD activa, cacheada, + overrides en memoria).
      *
      * @return array<string>
      */
     public function getBlacklistedWords(): array
     {
-        return $this->blacklistedWords;
+        $fromDb = Cache::rememberForever(BlacklistWord::CACHE_KEY, function () {
+            return BlacklistWord::query()->active()->pluck('word')->all();
+        });
+
+        return array_merge($fromDb, $this->extraBlacklistedWords);
     }
 
     /**
      * Establecer el número máximo de URLs permitidas.
+     * Es un override en memoria: no persiste en BD ni afecta a otras requests.
      *
      * @param  int  $max
      * @return void
      */
     public function setMaxAllowedUrls(int $max): void
     {
-        $this->maxAllowedUrls = $max;
+        $this->maxAllowedUrlsOverride = $max;
+    }
+
+    /**
+     * Obtener el límite de URLs vigente (override en memoria si existe, sino BD/caché).
+     */
+    public function getMaxAllowedUrls(): int
+    {
+        return $this->maxAllowedUrlsOverride ?? Setting::get('max_allowed_urls', 2);
     }
 }

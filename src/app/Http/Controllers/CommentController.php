@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnalysisLog;
 use App\Models\Comment;
 use App\Services\SpamFilterService;
 use Illuminate\Http\Request;
@@ -88,8 +89,11 @@ class CommentController extends Controller
         // ⚠️  La lógica de negocio está AQUÍ FUERA: en SpamFilterService
         $analysisResult = $this->spamFilter->analyze(
             content: $validated['content'],
-            author:  $validated['author']
+            author:  $validated['author'],
+            channel: 'web',
         );
+
+        AnalysisLog::record($analysisResult, 'web', $validated['author'], $validated['content'], $request->ip());
 
         // Paso 3: Determinar el estado final del comentario
         $status     = $analysisResult['isSpam'] ? 'spam' : 'approved';
@@ -205,8 +209,11 @@ class CommentController extends Controller
 
         $result = $this->spamFilter->analyze(
             content: $validated['content'],
-            author:  $validated['author']
+            author:  $validated['author'],
+            channel: 'web',
         );
+
+        AnalysisLog::record($result, 'web', $validated['author'], $validated['content'], $request->ip());
 
         $status = $result['isSpam'] ? 'spam' : 'approved';
 
@@ -303,11 +310,51 @@ class CommentController extends Controller
 
         $result = $this->spamFilter->analyze(
             content: $validated['text'],
-            author:  'alexa-bridge'
+            author:  'alexa-bridge',
+            channel: 'alexa',
         );
+
+        AnalysisLog::record($result, 'alexa', 'alexa-bridge', $validated['text'], $request->ip());
 
         return response()->json([
             'is_spam' => $result['isSpam'],
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════
+    // POST /api/integrations/check-spam – Canal autenticado por API key
+    // ══════════════════════════════════════════════════
+
+    /**
+     * Igual que checkSpam(), pero el canal viene del middleware
+     * VerifyIntegrationKey (atributo de la request), nunca del cliente.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function integrationCheckSpam(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'author'  => ['nullable', 'string', 'max:100'],
+            'content' => ['required', 'string', 'min:1', 'max:5000'],
+        ]);
+
+        $channel = $request->attributes->get('integration_channel');
+        $author = $validated['author'] ?? $channel;
+
+        $result = $this->spamFilter->analyze(
+            content: $validated['content'],
+            author: $author,
+            channel: $channel,
+        );
+
+        AnalysisLog::record($result, $channel, $author, $validated['content'], $request->ip());
+
+        return response()->json([
+            'isSpam' => $result['isSpam'],
+            'score'  => $result['score'],
+            'reason' => $result['reason'],
+            'detail' => $result['detail'],
         ]);
     }
 }

@@ -12,7 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->redirectGuestsTo(fn () => route('login'));
+
+        $middleware->alias([
+            'integration_key' => \App\Http\Middleware\VerifyIntegrationKey::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

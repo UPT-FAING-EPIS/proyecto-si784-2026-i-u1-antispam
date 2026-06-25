@@ -48,7 +48,15 @@
             background: rgba(17,24,39,0.85);
             backdrop-filter: blur(10px);
             position: sticky; top: 0; z-index: 50;
+            flex-wrap: wrap;
         }
+        .nav-links { display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; }
+        .nav-link {
+            padding:.4rem .8rem; border-radius:var(--radius); font-size:.82rem; font-weight:500;
+            color:var(--sub); text-decoration:none; transition:var(--transition); border:1px solid transparent;
+        }
+        .nav-link:hover { color:var(--text); background:rgba(99,102,241,.08); }
+        .nav-link.active { color:var(--text); background:rgba(99,102,241,.12); border-color:rgba(99,102,241,.3); }
         .logo { display:flex; align-items:center; gap:.75rem; text-decoration:none; }
         .logo-icon {
             width:38px; height:38px;
@@ -227,8 +235,20 @@
                 <span class="logo-sub">Panel de Administración</span>
             </div>
         </a>
+        <nav class="nav-links" aria-label="Navegación de administración">
+            <a href="{{ route('dashboard') }}" class="nav-link active">💬 Comentarios</a>
+            <a href="{{ route('admin.blacklist.index') }}" class="nav-link">⛔ Blacklist</a>
+            <a href="{{ route('admin.settings.edit') }}" class="nav-link">⚙️ Settings</a>
+            <a href="{{ route('admin.integration-keys.index') }}" class="nav-link">🔑 Keys</a>
+            <a href="{{ route('admin.audit-log.index') }}" class="nav-link">📋 Audit Log</a>
+            <a href="{{ route('admin.audit-log.metrics') }}" class="nav-link">📈 Métricas</a>
+        </nav>
         <div class="header-actions">
             <a href="{{ route('comments.form') }}" class="btn btn-ghost">📝 Ver Formulario</a>
+            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-ghost">🚪 Salir</button>
+            </form>
         </div>
     </header>
 

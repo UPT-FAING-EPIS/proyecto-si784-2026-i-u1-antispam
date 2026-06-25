@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 use App\Services\SpamFilterService;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  *
@@ -25,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SpamFilterTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Instancia del servicio bajo prueba.
      *
@@ -35,10 +38,15 @@ class SpamFilterTest extends TestCase
     /**
      * Configuración inicial antes de cada prueba.
      * Se ejecuta automáticamente por PHPUnit antes de cada test.
+     *
+     * Las ~18 palabras negras originales y el setting max_allowed_urls=2
+     * ya quedan sembrados por las propias migraciones (RefreshDatabase
+     * las ejecuta), así que no es necesario volver a crearlos aquí.
      */
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->spamFilter = new SpamFilterService();
     }
 

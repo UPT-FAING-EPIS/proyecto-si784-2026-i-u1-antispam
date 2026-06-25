@@ -17,6 +17,14 @@ until php artisan db:show &>/dev/null; do
   sleep 3
 done
 
+echo ">> Asegurando estructura de storage..."
+mkdir -p /var/www/html/storage/app/public \
+         /var/www/html/storage/framework/cache/data \
+         /var/www/html/storage/framework/sessions \
+         /var/www/html/storage/framework/testing \
+         /var/www/html/storage/framework/views \
+         /var/www/html/storage/logs
+
 echo ">> Ejecutando migraciones..."
 php artisan migrate --force
 

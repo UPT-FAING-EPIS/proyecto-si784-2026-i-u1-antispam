@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnalysisLog;
 use App\Models\TelegramMessage;
 use App\Services\SpamFilterService;
 use App\Services\TelegramBotService;
@@ -135,8 +136,11 @@ class TelegramController extends Controller
         // ─── Analizar con SpamFilterService ───────────────
         $analysisResult = $this->spamFilter->analyze(
             content: $text,
-            author:  $username ?? $firstName
+            author:  $username ?? $firstName,
+            channel: 'telegram',
         );
+
+        AnalysisLog::record($analysisResult, 'telegram', $username ?? $firstName, $text);
 
         $status     = $analysisResult['isSpam'] ? 'spam' : 'approved';
         $spamReason = $analysisResult['reason'] ?? null;

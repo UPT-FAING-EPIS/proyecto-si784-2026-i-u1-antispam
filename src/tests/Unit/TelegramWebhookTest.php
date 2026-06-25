@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Http\Controllers\TelegramController;
 use App\Services\SpamFilterService;
 use App\Services\TelegramBotService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Mockery;
 use Tests\TestCase;
@@ -29,11 +30,18 @@ use Tests\TestCase;
  */
 class TelegramWebhookTest extends TestCase
 {
+    use RefreshDatabase;
+
     private SpamFilterService $spamFilter;
 
+    /**
+     * Las palabras negras que este test ejercita ya quedan sembradas por
+     * la migración de blacklist_words (RefreshDatabase la ejecuta).
+     */
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->spamFilter = new SpamFilterService();
     }
 
@@ -127,6 +135,10 @@ class TelegramWebhookTest extends TestCase
      */
     public function test_webhook_ignores_updates_without_text(): void
     {
+        // .env.testing define un secret real; lo anulamos porque este test
+        // verifica la lógica de "sin texto", no la validación del secret.
+        config(['services.telegram.webhook_secret' => null]);
+
         // Simular un mock del TelegramBotService
         $telegramBotMock = Mockery::mock(TelegramBotService::class);
 
