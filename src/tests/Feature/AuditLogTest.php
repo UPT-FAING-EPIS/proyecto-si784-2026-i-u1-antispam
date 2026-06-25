@@ -17,7 +17,6 @@ class AuditLogTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO que se envía un comentario limpio desde el foro web
@@ -39,7 +38,6 @@ class AuditLogTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO que el endpoint simplificado de Alexa recibe un texto spam
@@ -59,7 +57,6 @@ class AuditLogTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO que el widget de demo de la landing llama a /api/check-spam
@@ -77,7 +74,6 @@ class AuditLogTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO registros de análisis en varios canales
@@ -100,7 +96,6 @@ class AuditLogTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un visitante sin sesión

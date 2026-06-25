@@ -16,7 +16,6 @@ class AuthTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un usuario administrador registrado
@@ -37,7 +36,6 @@ class AuthTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un usuario administrador registrado
@@ -58,7 +56,6 @@ class AuthTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un visitante sin sesión iniciada
@@ -73,7 +70,6 @@ class AuthTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un administrador con sesión activa

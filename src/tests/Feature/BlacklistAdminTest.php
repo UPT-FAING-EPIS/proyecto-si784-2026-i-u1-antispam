@@ -18,7 +18,6 @@ class BlacklistAdminTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un administrador autenticado
@@ -49,7 +48,6 @@ class BlacklistAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO una palabra activa en la lista negra
@@ -72,7 +70,6 @@ class BlacklistAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO una palabra en la lista negra
@@ -91,7 +88,6 @@ class BlacklistAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un visitante sin sesión

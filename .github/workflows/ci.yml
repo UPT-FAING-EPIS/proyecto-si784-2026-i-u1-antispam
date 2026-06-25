@@ -188,7 +188,8 @@ jobs:
           args: >
             -Dsonar.organization=cristhian465-sonar-cloud
             -Dsonar.projectKey=proyecto-si784-2026-i-u1-antispam
-            -Dsonar.branch.name=${{ github.head_ref || github.ref_name }}
+            -Dsonar.projectName=proyecto-si784-2026-i-u1-antispam
+            -Dsonar.branch.name=main
 
   # ════════════════════════════════════════════════════
   # 4) Semgrep (SAST) — anotaciones vía SARIF

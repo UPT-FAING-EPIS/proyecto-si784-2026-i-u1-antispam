@@ -17,7 +17,6 @@ class IntegrationKeyAdminTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO un administrador autenticado
@@ -50,7 +49,6 @@ class IntegrationKeyAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO que no se envía ninguna integration key
@@ -67,7 +65,6 @@ class IntegrationKeyAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO una key revocada
@@ -88,7 +85,6 @@ class IntegrationKeyAdminTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Gherkin:
      *   DADO una key activa
