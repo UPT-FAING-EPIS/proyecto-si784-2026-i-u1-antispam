@@ -21,9 +21,11 @@ services:
       - "${APP_HTTP_PORT:-80}:80"
     environment:
       APP_NAME: "Aegis Filter"
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_URL: http://localhost
+      APP_ENV: "${APP_ENV:-local}"
+      APP_DEBUG: "${APP_DEBUG:-true}"
+      # En VPS: definir en .env como https://tu-dominio (fuerza esquema https
+      # en las URLs generadas, ya que nginx/Caddy reenvían por HTTP plano).
+      APP_URL: "${APP_URL:-http://localhost}"
       # Requerido por Laravel para cifrar sesiones/cookies (CSRF).
       # Generar con: docker compose exec app php artisan key:generate --show
       APP_KEY: "${APP_KEY:-}"
