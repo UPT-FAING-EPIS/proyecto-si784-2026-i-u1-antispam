@@ -66,15 +66,19 @@ Versión 1.0
 El presente documento tiene como propósito definir la arquitectura de software del sistema "Aegis Filter" utilizando el modelo de vistas 4+1 (Lógica, Implementación, Procesos, Despliegue y Casos de Uso). Presenta una visión global del diseño, justificando cómo las decisiones arquitectónicas satisfacen los requerimientos funcionales de detección de spam y las prioridades de alto rendimiento, modularidad y fácil despliegue en la nube.
 
 **1.2. Alcance**
-Este documento se centra en el desarrollo de la arquitectura del backend en Laravel 11 y su despliegue contenedorizado. Incluye la vista lógica (MVC y Servicios), la vista de despliegue (Terraform en Azure) y la estructura de datos (MySQL). Se omiten procesos complejos de Frontend ya que el sistema opera como un middleware invisible al usuario.
+Este documento se centra en la arquitectura del backend en Laravel 11 ("Aegis Core") y su despliegue contenedorizado, así como en los canales de integración que delegan el análisis antispam a este núcleo: el formulario web del foro, un bot de Telegram, una Alexa Skill, un plugin de WordPress y un bot de Discord. Cada canal externo se implementa como un cliente desacoplado (microservicio o plugin) que consume la API HTTP del núcleo, autenticado mediante Integration Keys. Incluye la vista lógica (MVC y Servicios), la vista de despliegue (Terraform en Azure + Docker Compose + Caddy) y la estructura de datos (MySQL).
 
 **1.3. Definición, siglas y abreviaturas**
 * **API:** Interfaz de Programación de Aplicaciones.
 * **BDD:** Desarrollo Guiado por Comportamiento (Behavior-Driven Development).
+* **Bridge:** Microservicio satélite que traduce el protocolo de un canal externo (Alexa, Discord) al API HTTP del Aegis Core.
 * **Docker:** Plataforma de contenedorización de software.
+* **Gateway (Discord):** Conexión WebSocket persistente que Discord usa para entregar mensajes en tiempo real (no usa webhooks HTTP).
 * **IaC:** Infraestructura como Código (uso de Terraform).
+* **Integration Key:** Credencial por canal (hash SHA-256) que autentica las llamadas externas al endpoint `/api/integrations/check-spam`.
 * **MVC:** Patrón de arquitectura Modelo-Vista-Controlador.
 * **NSG:** Grupo de Seguridad de Red (Azure).
+* **Webhook:** Mecanismo HTTP usado por Telegram para notificar mensajes nuevos al backend.
 
 **1.4. Organización del documento**
 El documento está organizado en cuatro secciones principales: Objetivos y restricciones (define qué se debe cumplir), Representación de la arquitectura (donde se exponen los diagramas 4+1), y finalmente los atributos de calidad del software.
@@ -119,26 +123,55 @@ El documento está organizado en cuatro secciones principales: Objetivos y restr
 ```mermaid
 flowchart LR
     %% Actores
-    User((Cliente))
+    Visitante((Visitante Web))
     Admin((Administrador))
-    Sys((Sistema Aegis))
+    Telegram((Usuario Telegram))
+    Alexa((Usuario Alexa))
+    WP((Comentarista WordPress))
+    Discord((Usuario Discord))
 
-    %% Casos de Uso
-    UC1([Enviar Comentario])
-    UC2([Filtrar Contenido Spam])
-    UC3([Gestionar Listas Negras])
-    UC4([Visualizar Métricas de Spam])
+    %% Casos de uso - canal público
+    UC1([Enviar comentario en el foro])
+    UC2([Analizar mensaje de voz - Alexa Skill])
+    UC3([Escribir mensaje en grupo de Telegram])
+    UC4([Publicar comentario en WordPress])
+    UC5([Escribir mensaje en servidor Discord])
 
-    %% Relaciones
-    User --- UC1
-    UC1 ..->|<< include >>| UC2
-    Sys --- UC2
-    Admin --- UC3
-    Admin --- UC4
-    
+    %% Caso de uso núcleo
+    UCCORE([Analizar contenido contra reglas antispam])
+
+    %% Casos de uso administrativos
+    UC6([Gestionar lista negra de palabras])
+    UC7([Emitir / revocar Integration Keys])
+    UC8([Aprobar o eliminar comentarios])
+    UC9([Configurar límite de URLs])
+    UC10([Consultar bitácora de auditoría])
+
+    Visitante --- UC1
+    Telegram --- UC3
+    Alexa --- UC2
+    WP --- UC4
+    Discord --- UC5
+
+    UC1 -.->|include| UCCORE
+    UC2 -.->|include| UCCORE
+    UC3 -.->|include| UCCORE
+    UC4 -.->|include| UCCORE
+    UC5 -.->|include| UCCORE
+
+    Admin --- UC6
+    Admin --- UC7
+    Admin --- UC8
+    Admin --- UC9
+    Admin --- UC10
+
     classDef usecase fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000
-    class UC1,UC2,UC3,UC4 usecase
+    classDef core fill:#ffe0b2,stroke:#e65100,stroke-width:3px,color:#000
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 usecase
+    class UCCORE core
 ```
+
+> Los cinco canales (Web, Telegram, Alexa, WordPress, Discord) son interfaces distintas hacia el mismo caso de uso núcleo "Analizar contenido contra reglas antispam", implementado una sola vez en `SpamFilterService` y reutilizado por todos.
 
 ### 3.2. Vista Lógica
 
@@ -148,14 +181,20 @@ flowchart LR
 flowchart TD
     classDef layer fill:#e3f2fd,stroke:#1e88e5,stroke-width:2px,color:#000
     classDef db fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#000
+    classDef external fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
 
-    subgraph Presentacion ["Capa de Presentación (Frontend)"]
-        UI[Vistas Blade / Interfaz de Usuario]:::layer
+    subgraph Canales ["Canales de entrada (desacoplados)"]
+        UI[Vistas Blade - Foro Web]:::external
+        TG[Telegram Webhook]:::external
+        AX[Alexa Bridge - FastAPI]:::external
+        WP[Plugin WordPress]:::external
+        DC[Discord Bridge - discord.py]:::external
     end
 
-    subgraph Aplicacion ["Capa de Aplicación (Backend Laravel)"]
+    subgraph Aplicacion ["Capa de Aplicación (Aegis Core - Laravel)"]
+        MW[Middleware: auth / throttle / VerifyIntegrationKey]:::layer
         C[Controllers]:::layer
-        S[Aegis SpamFilterService]:::layer
+        S[SpamFilterService]:::layer
         M[Models ORM]:::layer
     end
 
@@ -163,149 +202,292 @@ flowchart TD
         BD[(Base de Datos MySQL)]:::db
     end
 
-    UI -->|Petición HTTP POST| C
+    UI -->|POST /comentarios| MW
+    TG -->|POST /api/telegram/webhook| MW
+    AX -->|POST /api/analyze| MW
+    WP -->|POST /api/integrations/check-spam<br/>header X-Integration-Key| MW
+    DC -->|POST /api/integrations/check-spam<br/>header X-Integration-Key| MW
+
+    MW --> C
     C -->|Inyección de Dependencias| S
     C -->|Mapeo de Datos| M
     M -->|Consultas SQL| BD
 ```
 
-**3.2.2. Diagrama de Secuencia (vista de diseño)**
+**3.2.2. Diagrama de Secuencia — Canal Web (vista de diseño)**
 ```mermaid
 sequenceDiagram
     autonumber
     actor Usuario
     participant Controller as CommentController
     participant Service as SpamFilterService
-    participant Model as Comment Model
+    participant Model as Comment
+    participant Log as AnalysisLog
     participant BD as MySQL
 
-    Usuario->>Controller: POST /comments (data)
+    Usuario->>Controller: POST /comentarios (author, content)
     activate Controller
-    
-    Controller->>Service: isSpam(request->content)
+
+    Controller->>Service: analyze(content, author, 'web')
     activate Service
-    
-    alt Contiene Spam (Falla Regex o Lista Negra)
-        Service-->>Controller: return true
-        Controller-->>Usuario: HTTP 403 Forbidden (Bloqueado)
-    else Contenido Limpio
-        Service-->>Controller: return false
-        deactivate Service
-        
-        Controller->>Model: create(data)
-        activate Model
-        Model->>BD: INSERT INTO comments
-        BD-->>Model: OK
-        Model-->>Controller: Instancia guardada exitosamente
-        deactivate Model
-        
-        Controller-->>Usuario: HTTP 201 Created (Publicado)
+    Service->>Service: checkBlacklistedWords(content)
+    Service->>Service: checkExcessiveUrls(content)
+    Service-->>Controller: {isSpam, reason, score, detail}
+    deactivate Service
+
+    Controller->>Model: create(author, content, status, spam_reason)
+    activate Model
+    Model->>BD: INSERT INTO comments
+    BD-->>Model: OK
+    deactivate Model
+
+    Controller->>Log: record(result, 'web', author, content, ip)
+    Log->>BD: INSERT INTO analysis_logs
+
+    alt isSpam = true
+        Controller-->>Usuario: Comentario marcado como spam (no visible)
+    else isSpam = false
+        Controller-->>Usuario: Comentario publicado (pendiente/aprobado)
     end
     deactivate Controller
 ```
 
-**3.2.3. Diagrama de Colaboración (vista de diseño)**
-
+**3.2.3. Diagrama de Secuencia — Canales externos integrados (WordPress / Discord)**
 ```mermaid
-flowchart TD
-    U((Usuario))
-    C[ : CommentController ]
-    S[ : SpamFilterService ]
-    M[ : Comment Model ]
-    DB[( : MySQL )]
+sequenceDiagram
+    autonumber
+    participant Bridge as Plugin/Bot externo<br/>(WordPress o Discord Bridge)
+    participant MW as VerifyIntegrationKey
+    participant Controller as CommentController
+    participant Service as SpamFilterService
+    participant Log as AnalysisLog
+    participant BD as MySQL
 
-    U -- "1: POST /comments" --> C
-    C -- "2: isSpam(content)" --> S
-    S -. "3: return boolean" .-> C
-    C -- "4: [Si es false] create(data)" --> M
-    M -- "5: INSERT" --> DB
-    DB -. "6: OK" .-> M
-    M -. "7: retorna instancia" .-> C
-    C -. "8: Respuesta HTTP 201 o 403" .-> U
-
-    classDef obj fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000
-    class C,S,M obj
+    Bridge->>MW: POST /api/integrations/check-spam<br/>header X-Integration-Key
+    activate MW
+    MW->>BD: findActiveByPlainKey(key)
+    alt Key inválida o revocada
+        MW-->>Bridge: 401 / 403
+    else Key válida
+        MW->>BD: UPDATE last_used_at
+        MW->>Controller: forward (request.integration_channel)
+        deactivate MW
+        activate Controller
+        Controller->>Service: analyze(content, author, channel)
+        Service-->>Controller: {isSpam, score, reason}
+        Controller->>Log: record(result, channel, author, content, ip)
+        Log->>BD: INSERT INTO analysis_logs
+        Controller-->>Bridge: 200 {isSpam, score, reason}
+        deactivate Controller
+    end
 ```
+
+> El bot de Discord (conectado al Gateway por WebSocket) y el plugin de WordPress (hook `pre_comment_approved`) son los únicos que llaman a este endpoint genérico; Alexa Bridge usa `/api/analyze` con la misma lógica interna pero sin requerir Integration Key (validación propia por firma de Amazon).
 
 **3.2.4. Diagrama de Objetos**
 ```mermaid
 classDiagram
-    class cliente_1 {
-        ip: "192.168.1.50"
-        navegador: "Chrome"
-    }
-    
-    class comentario_recibido {
+    class comentarioRecibido {
         author: "SpamBot99"
-        content: "Gana dinero facil entra a [http://spam.com](http://spam.com)"
-    }
-    
-    class motor_aegis {
-        max_links_allowed: 2
-        estado: "Activo"
-    }
-    
-    class respuesta_servidor {
-        status_code: 403
-        message: "Acceso denegado: Spam detectado"
+        content: "Gana dinero facil, compra ahora http://spam.com"
+        ip_address: "192.168.1.50"
     }
 
-    cliente_1 --> comentario_recibido : Envía payload
-    comentario_recibido --> motor_aegis : Es evaluado por
-    motor_aegis --> respuesta_servidor : Retorna
+    class resultadoAnalisis {
+        isSpam: true
+        reason: "blacklisted_word"
+        score: 100
+    }
+
+    class comentarioGuardado {
+        status: "spam"
+        spam_reason: "blacklisted_word"
+    }
+
+    class logAuditoria {
+        channel: "web"
+        is_spam: true
+        score: 100
+    }
+
+    comentarioRecibido --> resultadoAnalisis : SpamFilterService.analyze()
+    resultadoAnalisis --> comentarioGuardado : Comment.create()
+    resultadoAnalisis --> logAuditoria : AnalysisLog.record()
 ```
 
 **3.2.5. Diagrama de Clases**
 ```mermaid
 classDiagram
+    class Channel {
+        <<enum>>
+        Web
+        Telegram
+        Alexa
+        Wordpress
+        Discord
+    }
+
     class CommentController {
         - spamFilter: SpamFilterService
-        + index() View
-        + store(request: Request) RedirectResponse
+        + store(request: Request)
+        + checkSpam(request: Request)
+        + analyzeText(request: Request)
+        + integrationCheckSpam(request: Request)
+    }
+
+    class TelegramController {
+        - spamFilter: SpamFilterService
+        - bot: TelegramBotService
+        + handleWebhook(request: Request)
+        + setupWebhook(request: Request)
+    }
+
+    class VerifyIntegrationKey {
+        <<middleware>>
+        + handle(request, next)
     }
 
     class SpamFilterService {
-        - maxLinksAllowed: int
-        - blacklist: array
-        + __construct()
-        + isSpam(content: string) bool
-        - containsBlacklistedWords(content: string) bool
-        - exceedsUrlLimit(content: string) bool
+        + analyze(content, author, channel) array
+        - checkBlacklistedWords(content) array
+        - checkExcessiveUrls(content) array
+        - getMaxAllowedUrls() int
     }
 
     class Comment {
-        # fillable: array
-        + create(attributes: array) Comment
+        + author: string
+        + content: string
+        + status: enum
+        + spam_reason: string
+        + approved() Builder
+        + spam() Builder
     }
 
-    CommentController ..> SpamFilterService : Usa (Inyección)
-    CommentController ..> Comment : Crea
+    class BlacklistWord {
+        + word: string
+        + is_active: bool
+        + active() Builder
+    }
+
+    class IntegrationKey {
+        + channel: string
+        + key_hash: string
+        + key_prefix: string
+        + is_active: bool
+        + generate(channel, label, user)$ array
+        + findActiveByPlainKey(key)$ IntegrationKey
+    }
+
+    class AnalysisLog {
+        + channel: string
+        + is_spam: bool
+        + score: int
+        + record(result, channel, author, content, ip)$ void
+    }
+
+    class TelegramMessage {
+        + chat_id: int
+        + status: enum
+        + action_taken: string
+    }
+
+    class Setting {
+        + key: string
+        + value: string
+        + get(key, default)$ mixed
+    }
+
+    class User {
+        + name: string
+        + email: string
+    }
+
+    CommentController ..> SpamFilterService : usa
+    CommentController ..> Comment : crea
+    CommentController ..> AnalysisLog : registra
+    TelegramController ..> SpamFilterService : usa
+    TelegramController ..> TelegramMessage : registra
+    VerifyIntegrationKey ..> IntegrationKey : valida
+    VerifyIntegrationKey ..> Channel : asigna
+    SpamFilterService ..> BlacklistWord : consulta
+    SpamFilterService ..> Setting : lee max_allowed_urls
+    IntegrationKey ..> Channel : pertenece a
+    User "1" --> "*" BlacklistWord : crea
+    User "1" --> "*" IntegrationKey : emite
 ```
 
-**3.2.6. Diagrama de Base de datos (relacional o no relacional)**
+**3.2.6. Diagrama de Base de datos (modelo relacional)**
 ```mermaid
 erDiagram
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar password
+    }
+
     COMMENTS {
         bigint id PK
-        varchar author_name
-        varchar author_email
+        varchar author
+        varchar email
         text content
-        boolean is_spam
-        decimal spam_score
-        timestamp created_at
-        timestamp updated_at
-    }
-    
-    SPAM_RULES {
-        bigint id PK
-        enum rule_type "keyword, regex, url_pattern"
-        varchar pattern
-        boolean is_active
+        enum status "pending, approved, spam"
+        varchar spam_reason
+        varchar ip_address
         timestamp created_at
     }
 
-    COMMENTS ||--o{ SPAM_RULES : "es evaluado contra"
+    BLACKLIST_WORDS {
+        bigint id PK
+        varchar word
+        boolean is_active
+        bigint created_by FK
+    }
+
+    INTEGRATION_KEYS {
+        bigint id PK
+        varchar channel
+        varchar label
+        varchar key_hash
+        varchar key_prefix
+        boolean is_active
+        timestamp last_used_at
+        bigint created_by FK
+    }
+
+    ANALYSIS_LOGS {
+        bigint id PK
+        varchar channel
+        varchar author
+        text content
+        boolean is_spam
+        varchar reason
+        smallint score
+        varchar ip_address
+    }
+
+    TELEGRAM_MESSAGES {
+        bigint id PK
+        bigint chat_id
+        bigint user_id
+        varchar username
+        text content
+        enum status "approved, spam"
+        varchar action_taken
+    }
+
+    SETTINGS {
+        bigint id PK
+        varchar key
+        varchar value
+        enum type "int, bool, json, string"
+    }
+
+    USERS ||--o{ BLACKLIST_WORDS : "crea"
+    USERS ||--o{ INTEGRATION_KEYS : "emite"
 ```
+
+> `COMMENTS`, `ANALYSIS_LOGS`, `TELEGRAM_MESSAGES` y `SETTINGS` son tablas independientes (sin FK hacia `USERS`); se relacionan lógicamente por `channel`, no por clave foránea.
 
 ### 3.3. Vista de Implementación (vista de desarrollo)
 
@@ -320,10 +502,12 @@ flowchart TD
         V[Views / Blade Templates]:::module
     end
 
-    subgraph App ["Paquete: App (Dominio y Aplicación)"]
-        C[Http\Controllers]:::module
-        S[Services\SpamFilter]:::module
+    subgraph App ["Paquete: App\\Http + App\\Services (Aegis Core)"]
+        MW[Http\\Middleware\\VerifyIntegrationKey]:::module
+        C[Http\\Controllers]:::module
+        S[Services\\SpamFilterService]:::module
         M[Models]:::module
+        E[Enums\\Channel]:::module
     end
 
     subgraph DB ["Paquete: Infraestructura"]
@@ -331,10 +515,21 @@ flowchart TD
         D[(MySQL Database)]:::layer
     end
 
-    Cliente((Navegador)):::external -->|Rutas web.php| C
+    subgraph Bridges ["Paquetes externos (repos independientes)"]
+        AB[alexa-bridge/ - Python FastAPI]:::external
+        DB2[discord-bridge/ - Python discord.py]:::external
+        WPP[wordpress-plugin/aegis-filter/ - PHP]:::external
+    end
+
+    Cliente((Navegador / Bot)):::external -->|Rutas web.php / api.php| MW
+    AB -->|HTTP POST /api/analyze| MW
+    DB2 -->|HTTP POST /api/integrations/check-spam| MW
+    WPP -->|HTTP POST /api/integrations/check-spam| MW
+    MW --> C
     C -->|Retorna| V
     C -->|Inyecta| S
     C -->|Usa| M
+    M -->|Usa| E
     M -->|Hereda| O
     O -->|Query SQL| D
 ```
@@ -347,21 +542,35 @@ flowchart TD
     classDef db fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#000
     classDef note fill:#fff9c4,stroke:#fbc02d,stroke-dasharray: 5 5,color:#000
 
-    Cliente([Cliente Externo]):::external
+    Navegador([Navegador Web]):::external
+    TelegramAPI([Telegram Bot API]):::external
+    AlexaSrv([Amazon Alexa Service]):::external
+    WPSite([Sitio WordPress externo]):::external
+    DiscordGW([Discord Gateway]):::external
 
-    subgraph Docker ["Docker Host (Debian 12 Linux)"]
+    subgraph Docker ["Docker Host (VPS Debian, Docker Compose)"]
         direction TB
-        Web[Nginx Web Server<br>Puerto: 80]:::comp
-        App[Laravel Application<br>PHP 8.2 FPM]:::comp
-        DB[(MySQL 8 Database<br>Puerto: 3306)]:::db
+        Caddy[Caddy 2 - Reverse Proxy<br/>TLS automático - Puertos 80/443]:::comp
+        App[app: Laravel 11 + PHP-Apache<br/>Puerto interno 80]:::comp
+        AlexaBridge[alexa-bridge: FastAPI<br/>Puerto interno 8080]:::comp
+        DiscordBridge[discord-bridge: discord.py<br/>sin puerto - conexión saliente]:::comp
+        PMA[phpmyadmin]:::comp
+        DB[(db: MySQL 8<br/>Puerto interno 3306)]:::db
     end
 
-    Cliente -->|HTTP / HTTPS| Web
-    Web -->|Peticiones FastCGI 9000| App
-    App -->|TCP/IP PDO 3306| DB
+    Navegador -->|HTTPS| Caddy
+    Caddy -->|HTTP interno| App
+    TelegramAPI -->|Webhook HTTPS| Caddy
+    AlexaSrv -->|HTTPS /alexa| Caddy
+    Caddy -->|proxy| AlexaBridge
+    WPSite -->|HTTPS + X-Integration-Key| Caddy
+    AlexaBridge -->|HTTP /api/analyze| App
+    DiscordBridge -->|HTTP /api/integrations/check-spam| App
+    DiscordGW -.->|WebSocket persistente| DiscordBridge
+    App -->|PDO MySQL| DB
+    PMA -->|PDO MySQL| DB
 
-    %% Nota explicativa
-    Nota[Nota: El puerto 3306 está expuesto<br>solo en la red interna de Docker,<br>no al exterior.]:::note
+    Nota[Nota: el puerto 3306 solo es<br/>accesible dentro de la red Docker<br/>interna, no se expone a internet.]:::note
     DB -.-> Nota
 ```
 
@@ -376,20 +585,30 @@ flowchart TD
     classDef error fill:#ffccbc,stroke:#d84315,stroke-width:2px,color:#000
     classDef success fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000
 
-    A([Inicio: Recibir Petición POST]):::startEnd --> B[Extraer contenido del comentario]:::process
-    B --> C[SpamFilterService: Validar Lista Negra]:::process
-    C --> D{¿Contiene palabras\nprohibidas?}:::decision
-    
-    D -- Sí --> E[Retornar HTTP 403 Forbidden]:::error
-    D -- No --> F[SpamFilterService: Contar URLs con Regex]:::process
-    
-    F --> G{¿URLs > Límite?}:::decision
-    G -- Sí --> E
-    G -- No --> H[Model: Guardar en Base de Datos]:::process
-    
-    H --> I[Retornar HTTP 201 Created]:::success
-    E --> J([Fin del proceso]):::startEnd
-    I --> J
+    A([Inicio: mensaje recibido desde<br/>cualquier canal]):::startEnd --> B{¿Canal requiere<br/>Integration Key?}:::decision
+    B -- "Sí (WordPress / Discord)" --> B2[VerifyIntegrationKey: validar header]:::process
+    B2 --> B3{¿Key válida y activa?}:::decision
+    B3 -- No --> E1[Retornar HTTP 401/403]:::error
+    B3 -- Sí --> C[SpamFilterService: normalizar contenido]:::process
+    B -- "No (Web / Telegram / Alexa)" --> C
+
+    C --> D[Validar contra lista negra]:::process
+    D --> D2{¿Contiene palabra\nprohibida?}:::decision
+    D2 -- Sí --> F[score=100, reason=blacklisted_word]:::error
+    D2 -- No --> G[Contar URLs con Regex]:::process
+    G --> G2{¿URLs > límite\nconfigurado?}:::decision
+    G2 -- Sí --> F2[score=80, reason=too_many_urls]:::error
+    G2 -- No --> H[isSpam=false]:::success
+
+    F --> I[Registrar en AnalysisLog]:::process
+    F2 --> I
+    H --> I
+    I --> J{¿Canal persiste\nregistro propio?}:::decision
+    J -- "Sí (Web→Comment, Telegram→TelegramMessage)" --> K[Guardar/actualizar registro]:::process
+    J -- "No (WordPress/Discord/Alexa)" --> L[Responder JSON al canal]:::process
+    K --> M([Fin]):::startEnd
+    L --> M
+    E1 --> M
 ```
 
 ### 3.5. Vista de Despliegue (vista física)
@@ -400,23 +619,39 @@ flowchart TD
     classDef cloud fill:#e3f2fd,stroke:#1e88e5,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef node fill:#fff,stroke:#333,stroke-width:2px,color:#000
     classDef db fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#000
+    classDef external fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
 
     Internet((Internet Pública))
+    Telegram[Telegram Bot API]:::external
+    Alexa[Amazon Alexa Service]:::external
+    Discord[Discord Gateway]:::external
+    WordPress[Sitios WordPress externos]:::external
 
-    subgraph Azure ["Microsoft Azure Cloud (Aprovisionado con Terraform)"]
-        NSG{Grupo de Seguridad de Red\nNetwork Security Group\nInbound: 80, 443, 22}:::node
-        
-        subgraph VM ["Máquina Virtual (Standard_B1ms)"]
-            subgraph Docker ["Docker Compose Network"]
-                App[Contenedor: app_aegis\nLaravel 11]:::node
-                DB[(Contenedor: db_aegis\nMySQL 8)]:::db
+    subgraph Azure ["Microsoft Azure Cloud (aprovisionado con Terraform)"]
+        NSG{Network Security Group<br/>Inbound: 80, 443, 22}:::node
+
+        subgraph VM ["Máquina Virtual (Standard_B1ms) - dominio sytes.net"]
+            subgraph DockerNet ["Docker Compose Network (aegisfilter_network)"]
+                Caddy[Contenedor: caddy<br/>Reverse proxy + TLS Let's Encrypt]:::node
+                App[Contenedor: app<br/>Laravel 11 / PHP 8.2 Apache]:::node
+                AlexaBr[Contenedor: alexa-bridge<br/>FastAPI]:::node
+                DiscordBr[Contenedor: discord-bridge<br/>discord.py]:::node
+                DB[(Contenedor: db<br/>MySQL 8)]:::db
             end
         end
     end
 
-    Internet -->|Tráfico HTTP/SSH| NSG
-    NSG -->|Tráfico Filtrado| VM
-    App -->|Conexión interna aislada| DB
+    Internet -->|HTTPS / SSH| NSG
+    Telegram -.->|Webhook HTTPS| NSG
+    Alexa -.->|HTTPS| NSG
+    WordPress -.->|HTTPS + Integration Key| NSG
+    NSG -->|Tráfico filtrado 80/443| Caddy
+    Caddy -->|proxy interno| App
+    Caddy -->|proxy interno| AlexaBr
+    DiscordBr -.->|WebSocket saliente| Discord
+    AlexaBr -->|HTTP interno| App
+    DiscordBr -->|HTTP interno| App
+    App -->|Conexión interna aislada<br/>puerto 3306 no expuesto| DB
 ```
 
 ---
