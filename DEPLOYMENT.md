@@ -1,4 +1,4 @@
-# Despliegue del Alexa Bridge en el VPS
+# Despliegue de los bridges en el VPS
 
 Pasos para exponer `alexa-bridge` con HTTPS público (requisito de Amazon
 para Custom Endpoints) y registrar la Skill en la consola de Amazon.
@@ -84,3 +84,46 @@ Debe responder si el mensaje fue bloqueado o procesado correctamente.
   (no recomendado dejarlo así en producción).
 - Si Caddy no logra emitir el certificado, revisar que el puerto 80
   sea alcanzable desde internet (Let's Encrypt usa el reto HTTP-01).
+
+---
+
+# Despliegue del Discord Bridge en el VPS
+
+A diferencia de `alexa-bridge`, este servicio **no necesita** dominio, DNS
+ni certificado TLS propio: el bot solo abre una conexión saliente
+(WebSocket) hacia el Gateway de Discord, no expone ningún puerto. No
+requiere tocar Caddy ni el firewall.
+
+## 1. Crear la aplicación/bot
+
+En https://discord.com/developers/applications:
+
+1. Crear una **Application** y, en la pestaña **Bot**, activar
+   **MESSAGE CONTENT INTENT** (Privileged Gateway Intents) — obligatorio
+   para que el bot pueda leer el texto de los mensajes.
+2. Copiar el **Token** del bot → será `DISCORD_BOT_TOKEN`.
+3. En **OAuth2 > URL Generator**: scope `bot`, permisos **View Channels**,
+   **Send Messages**, **Manage Messages**, **Read Message History**; abrir
+   la URL generada para invitar el bot al servidor de Discord deseado.
+
+## 2. Emitir la Integration Key
+
+Desde `/admin/integration-keys` (sesión de admin en producción), generar
+una key para el canal `discord` → será `DISCORD_INTEGRATION_KEY`.
+
+## 3. Configurar el `.env` del VPS y levantar el servicio
+
+```bash
+DISCORD_BOT_TOKEN=el-token-del-paso-1
+DISCORD_INTEGRATION_KEY=afk_la-key-del-paso-2
+```
+
+```bash
+docker compose up -d --build discord-bridge
+docker compose logs -f discord-bridge
+```
+
+Confirmar en los logs: `Conectado a Discord como <nombre-del-bot>`.
+
+Más detalle (incluido cómo probar y revocar acceso) en
+[`discord-bridge/README.md`](discord-bridge/README.md).

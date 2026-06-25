@@ -139,6 +139,31 @@ services:
       retries: 3
       start_period: 10s
 
+  # ─── Discord Bridge (Nuevo Microservicio) ────────
+  discord-bridge:
+    build:
+      context: ./discord-bridge
+      dockerfile: Dockerfile
+    container_name: aegisfilter_discord_bridge
+    restart: unless-stopped
+    # Sin "ports": el bot solo abre una conexión saliente (WebSocket) al
+    # Gateway de Discord, no expone ningún servidor HTTP.
+    environment:
+      # URL interna del Aegis Core dentro de la red Docker.
+      AEGIS_API_URL: "http://app:80/api/integrations/check-spam"
+
+      # Token del bot (Discord Developer Portal > Bot) e Integration Key
+      # (emitida desde /admin/integration-keys, canal "discord").
+      DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN:-}"
+      AEGIS_INTEGRATION_KEY: "${DISCORD_INTEGRATION_KEY:-}"
+
+      # Timeout en segundos para consultas al Aegis Core
+      AEGIS_REQUEST_TIMEOUT: "10"
+    depends_on:
+      - app
+    networks:
+      - aegisfilter_network
+
   # ─── Caddy (Reverse Proxy + HTTPS automático) ─────
   # Solo para el VPS de producción: levantar con
   #   docker compose --profile proxy up -d

@@ -12,4 +12,5 @@ enum Channel: string
     case Telegram = 'telegram';
     case Alexa = 'alexa';
     case Wordpress = 'wordpress';
+    case Discord = 'discord';
 }
