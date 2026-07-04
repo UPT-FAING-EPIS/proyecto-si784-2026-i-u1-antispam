@@ -127,3 +127,4 @@ Confirmar en los logs: `Conectado a Discord como <nombre-del-bot>`.
 
 Más detalle (incluido cómo probar y revocar acceso) en
 [`discord-bridge/README.md`](discord-bridge/README.md).
+
